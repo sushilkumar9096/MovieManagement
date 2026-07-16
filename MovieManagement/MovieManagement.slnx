@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="MovieManagement.DataAccess/MovieManagement.DataAccess.csproj" />
+  <Project Path="MovieManagement.Domain/MovieManagement.Domain.csproj" />
+  <Project Path="MovieManagement.WebAPI/MovieManagement.WebAPI.csproj" />
+</Solution>
