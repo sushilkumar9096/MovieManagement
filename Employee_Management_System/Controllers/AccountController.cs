@@ -1,6 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Employee_Management_System.Data;
-using Employee_Management_System.Models;
+﻿using Employee_Management_System.Data;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Employee_Management_System.Controllers
 {
@@ -13,7 +12,7 @@ namespace Employee_Management_System.Controllers
             _context = context;
         }
 
-        // GET: Login Page
+        // GET: Login
         public IActionResult Login()
         {
             return View();
@@ -28,11 +27,12 @@ namespace Employee_Management_System.Controllers
 
             if (user != null)
             {
-                // Store session
+                // 🔥 Store session data
+                HttpContext.Session.SetString("UserId", user.Id.ToString());
                 HttpContext.Session.SetString("Username", user.Username);
                 HttpContext.Session.SetString("Role", user.Role);
 
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("Index", "Employee");
             }
 
             ViewBag.Error = "Invalid Username or Password";

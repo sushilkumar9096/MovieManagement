@@ -15,9 +15,18 @@ namespace Employee_Management_System.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            base.OnModelCreating(modelBuilder);
+
             modelBuilder.Entity<Employee>()
                 .Property(e => e.Salary)
-                .HasPrecision(18, 2); // total digits, decimal places
+                .HasPrecision(18, 2);
+
+            // 🔥 ADD THIS RELATION
+            modelBuilder.Entity<User>()
+                .HasOne(u => u.Employee)
+                .WithOne()
+                .HasForeignKey<User>(u => u.EmployeeId)
+                .OnDelete(DeleteBehavior.Restrict);
         }
 
     }
