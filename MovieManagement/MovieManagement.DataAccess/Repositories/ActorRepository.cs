@@ -18,7 +18,17 @@ namespace MovieManagement.DataAccess.Repositories
             return _dbSet
                 .Include(a => a.Biography)
                 .Include(a => a.Movies)
+                    .ThenInclude(m => m.Genre)
                 .ToList();
+        }
+
+        public override Actor? GetById(int id)
+        {
+            return _dbSet
+                .Include(a => a.Biography)
+                .Include(a => a.Movies)
+                    .ThenInclude(m => m.Genre)
+                .FirstOrDefault(a => a.Id == id);
         }
     }
 }

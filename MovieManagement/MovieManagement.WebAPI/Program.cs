@@ -53,7 +53,15 @@ namespace MovieManagement.WebAPI
 
             app.MapControllers();
 
+            // Redirect root path to Swagger UI
+            app.MapGet("/", (HttpContext context) =>
+            {
+                context.Response.Redirect("/swagger");
+                return Task.CompletedTask;
+            });
+
             app.Run();
         }
     }
 }
+
