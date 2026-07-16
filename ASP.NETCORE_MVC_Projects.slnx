@@ -1,6 +1,0 @@
-<Solution>
-  <Project Path="Employee_Management_System/Employee_Management_System.csproj" Id="689955e0-99d9-4322-b9e6-5ffde3e9ed08" />
-  <Project Path="Student_Management_System/Student_Management_System.csproj">
-    <Build Solution="Debug|*" Project="false" />
-  </Project>
-</Solution>
