@@ -4,6 +4,7 @@ using MovieManagement.Domain.Repositories;
 using MovieManagement.WebAPI.DTOs;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.AspNetCore.Authorization;
 
 namespace MovieManagement.WebAPI.Controllers
 {
@@ -43,6 +44,7 @@ namespace MovieManagement.WebAPI.Controllers
 
         // POST: api/Genre
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public ActionResult<GenreDto> CreateGenre([FromBody] GenreDto dto)
         {
             if (dto == null || string.IsNullOrWhiteSpace(dto.Name))

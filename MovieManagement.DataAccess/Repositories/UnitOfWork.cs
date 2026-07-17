@@ -12,6 +12,7 @@ namespace MovieManagement.DataAccess.Repositories
         public IMovieRepository Movies { get; }
         public IGenreRepository Genres { get; }
         public IBiographyRepository Biographies { get; }
+        public IUserRepository Users { get; }
 
         public UnitOfWork(ApplicationDbContext context)
         {
@@ -20,6 +21,7 @@ namespace MovieManagement.DataAccess.Repositories
             Movies = new MovieRepository(_context);
             Genres = new GenreRepository(_context);
             Biographies = new BiographyRepository(_context);
+            Users = new UserRepository(_context);
         }
 
         public int Save()

@@ -4,6 +4,7 @@ using MovieManagement.Domain.Repositories;
 using MovieManagement.WebAPI.DTOs;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.AspNetCore.Authorization;
 
 namespace MovieManagement.WebAPI.Controllers
 {
@@ -51,6 +52,7 @@ namespace MovieManagement.WebAPI.Controllers
 
         // POST: api/Movie
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public ActionResult<MovieDto> CreateMovie([FromBody] MovieCreateDto dto)
         {
             if (dto == null) return BadRequest("Invalid client request");
@@ -89,6 +91,7 @@ namespace MovieManagement.WebAPI.Controllers
 
         // DELETE: api/Movie/5
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
         public IActionResult DeleteMovie(int id)
         {
             var movie = _unitOfWork.Movies.GetById(id);

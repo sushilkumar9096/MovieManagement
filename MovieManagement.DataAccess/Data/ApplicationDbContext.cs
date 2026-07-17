@@ -14,6 +14,7 @@ namespace MovieManagement.DataAccess.Data
         public DbSet<Movie> Movies { get; set; }
         public DbSet<Biography> Biographies { get; set; }
         public DbSet<Genre> Genres { get; set; }
+        public DbSet<User> Users { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -87,6 +88,12 @@ namespace MovieManagement.DataAccess.Data
                 new { MovieId = 1, ActorId = 1 }, // Forrest Gump (Tom Hanks)
                 new { MovieId = 2, ActorId = 2 }, // Inception (Leonardo DiCaprio)
                 new { MovieId = 3, ActorId = 3 }  // The Shawshank Redemption (Morgan Freeman)
+            );
+
+            // Seeding default users
+            modelBuilder.Entity<User>().HasData(
+                new User { Id = 1, Username = "admin", PasswordHash = User.HashPassword("password123"), Role = "Admin" },
+                new User { Id = 2, Username = "user", PasswordHash = User.HashPassword("password123"), Role = "User" }
             );
         }
     }

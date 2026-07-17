@@ -8,6 +8,7 @@ namespace MovieManagement.Domain.Repositories
         IMovieRepository Movies { get; }
         IGenreRepository Genres { get; }
         IBiographyRepository Biographies { get; }
+        IUserRepository Users { get; }
         int Save();
     }
 }
