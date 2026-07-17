@@ -26,12 +26,15 @@ namespace MovieManagement.DataAccess.Data
                 .HasForeignKey<Biography>(b => b.ActorId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            // Configure 1-to-many relationship: Actor and Movie
+            // Configure many-to-many relationship: Movie and Actor (mapped by property 'Actors' in Movie)
             modelBuilder.Entity<Movie>()
-                .HasOne(m => m.Actor)
+                .HasMany(m => m.Actors)
                 .WithMany(a => a.Movies)
-                .HasForeignKey(m => m.ActorId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .UsingEntity<Dictionary<string, object>>(
+                    "MovieActor",
+                    j => j.HasOne<Actor>().WithMany().HasForeignKey("ActorId"),
+                    j => j.HasOne<Movie>().WithMany().HasForeignKey("MovieId")
+                );
 
             // Configure many-to-many relationship: Movie and Genre (mapped by property 'Genre' in Movie)
             modelBuilder.Entity<Movie>()
@@ -66,9 +69,24 @@ namespace MovieManagement.DataAccess.Data
 
             // Seeding Movies
             modelBuilder.Entity<Movie>().HasData(
-                new Movie { Id = 1, Name = "Forrest Gump", Description = "A simple man's epic journey through history.", ActorId = 1 },
-                new Movie { Id = 2, Name = "Inception", Description = "A thief enters dreams to plant an idea.", ActorId = 2 },
-                new Movie { Id = 3, Name = "The Shawshank Redemption", Description = "Two imprisoned men bond over a number of years.", ActorId = 3 }
+                new Movie { Id = 1, Name = "Forrest Gump", Description = "A simple man's epic journey through history." },
+                new Movie { Id = 2, Name = "Inception", Description = "A thief enters dreams to plant an idea." },
+                new Movie { Id = 3, Name = "The Shawshank Redemption", Description = "Two imprisoned men bond over a number of years." }
+            );
+
+            // Seeding many-to-many relationships (MovieGenre)
+            modelBuilder.Entity("MovieGenre").HasData(
+                new { MovieId = 1, GenreId = 1 }, // Forrest Gump (Drama)
+                new { MovieId = 2, GenreId = 2 }, // Inception (Sci-Fi)
+                new { MovieId = 2, GenreId = 3 }, // Inception (Action)
+                new { MovieId = 3, GenreId = 1 }  // The Shawshank Redemption (Drama)
+            );
+
+            // Seeding many-to-many relationships (MovieActor)
+            modelBuilder.Entity("MovieActor").HasData(
+                new { MovieId = 1, ActorId = 1 }, // Forrest Gump (Tom Hanks)
+                new { MovieId = 2, ActorId = 2 }, // Inception (Leonardo DiCaprio)
+                new { MovieId = 3, ActorId = 3 }  // The Shawshank Redemption (Morgan Freeman)
             );
         }
     }

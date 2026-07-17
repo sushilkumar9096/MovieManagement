@@ -20,9 +20,19 @@ namespace MovieManagement.WebAPI.Controllers
 
         // GET: api/Genre
         [HttpGet]
-        public ActionResult<IEnumerable<GenreDto>> GetGenres()
+        public ActionResult<IEnumerable<GenreDto>> GetGenres([FromQuery] string? name)
         {
-            var genres = _unitOfWork.Genres.GetAll();
+            IEnumerable<Genre> genres;
+            if (!string.IsNullOrWhiteSpace(name))
+            {
+                var search = name.Trim().ToLower();
+                genres = _unitOfWork.Genres.Find(g => g.Name.ToLower().Contains(search));
+            }
+            else
+            {
+                genres = _unitOfWork.Genres.GetAll();
+            }
+
             var dtos = genres.Select(g => new GenreDto
             {
                 Id = g.Id,

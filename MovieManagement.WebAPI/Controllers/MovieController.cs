@@ -20,9 +20,19 @@ namespace MovieManagement.WebAPI.Controllers
 
         // GET: api/Movie
         [HttpGet]
-        public ActionResult<IEnumerable<MovieDto>> GetMovies()
+        public ActionResult<IEnumerable<MovieDto>> GetMovies([FromQuery] string? name)
         {
-            var movies = _unitOfWork.Movies.GetAll();
+            IEnumerable<Movie> movies;
+            if (!string.IsNullOrWhiteSpace(name))
+            {
+                var search = name.Trim().ToLower();
+                movies = _unitOfWork.Movies.Find(m => m.Name.ToLower().Contains(search));
+            }
+            else
+            {
+                movies = _unitOfWork.Movies.GetAll();
+            }
+
             var dtos = movies.Select(MapToDto).ToList();
             return Ok(dtos);
         }
@@ -45,20 +55,22 @@ namespace MovieManagement.WebAPI.Controllers
         {
             if (dto == null) return BadRequest("Invalid client request");
 
-            // Validate Actor
-            var actor = _unitOfWork.Actors.GetById(dto.ActorId);
-            if (actor == null)
-            {
-                return BadRequest($"Actor with ID {dto.ActorId} does not exist.");
-            }
-
             var movie = new Movie
             {
                 Name = dto.Name,
-                Description = dto.Description,
-                ActorId = dto.ActorId,
-                Actor = actor
+                Description = dto.Description
             };
+
+            // Link Actors
+            if (dto.ActorIds != null && dto.ActorIds.Count > 0)
+            {
+                var actors = _unitOfWork.Actors.Find(a => dto.ActorIds.Contains(a.Id)).ToList();
+                if (actors.Count != dto.ActorIds.Count)
+                {
+                    return BadRequest("One or more Actor IDs do not exist.");
+                }
+                movie.Actors = actors;
+            }
 
             // Link Genres
             if (dto.GenreIds != null && dto.GenreIds.Count > 0)
@@ -97,8 +109,9 @@ namespace MovieManagement.WebAPI.Controllers
                 Id = movie.Id,
                 Name = movie.Name,
                 Description = movie.Description,
-                ActorId = movie.ActorId,
-                ActorName = movie.Actor != null ? $"{movie.Actor.FirstName} {movie.Actor.LastName}" : "Unknown",
+                Actors = movie.Actors != null 
+                    ? movie.Actors.Select(a => new ActorShortDto { Id = a.Id, Name = $"{a.FirstName} {a.LastName}" }).ToList() 
+                    : new List<ActorShortDto>(),
                 Genres = movie.Genre != null ? movie.Genre.Select(g => g.Name).ToList() : new List<string>()
             };
         }

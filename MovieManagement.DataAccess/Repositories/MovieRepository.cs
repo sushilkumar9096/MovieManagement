@@ -4,6 +4,8 @@ using MovieManagement.Domain.Repositories;
 using MovieManagement.DataAccess.Data;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
+using System;
 
 namespace MovieManagement.DataAccess.Repositories
 {
@@ -16,7 +18,7 @@ namespace MovieManagement.DataAccess.Repositories
         public override IEnumerable<Movie> GetAll()
         {
             return _dbSet
-                .Include(m => m.Actor)
+                .Include(m => m.Actors)
                 .Include(m => m.Genre)
                 .ToList();
         }
@@ -24,9 +26,18 @@ namespace MovieManagement.DataAccess.Repositories
         public override Movie? GetById(int id)
         {
             return _dbSet
-                .Include(m => m.Actor)
+                .Include(m => m.Actors)
                 .Include(m => m.Genre)
                 .FirstOrDefault(m => m.Id == id);
+        }
+
+        public override IEnumerable<Movie> Find(Expression<Func<Movie, bool>> expression)
+        {
+            return _dbSet
+                .Include(m => m.Actors)
+                .Include(m => m.Genre)
+                .Where(expression)
+                .ToList();
         }
     }
 }

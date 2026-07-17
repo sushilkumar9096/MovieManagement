@@ -4,6 +4,8 @@ using MovieManagement.Domain.Repositories;
 using MovieManagement.DataAccess.Data;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
+using System;
 
 namespace MovieManagement.DataAccess.Repositories
 {
@@ -19,6 +21,8 @@ namespace MovieManagement.DataAccess.Repositories
                 .Include(a => a.Biography)
                 .Include(a => a.Movies)
                     .ThenInclude(m => m.Genre)
+                .Include(a => a.Movies)
+                    .ThenInclude(m => m.Actors)
                 .ToList();
         }
 
@@ -28,7 +32,21 @@ namespace MovieManagement.DataAccess.Repositories
                 .Include(a => a.Biography)
                 .Include(a => a.Movies)
                     .ThenInclude(m => m.Genre)
+                .Include(a => a.Movies)
+                    .ThenInclude(m => m.Actors)
                 .FirstOrDefault(a => a.Id == id);
+        }
+
+        public override IEnumerable<Actor> Find(Expression<Func<Actor, bool>> expression)
+        {
+            return _dbSet
+                .Include(a => a.Biography)
+                .Include(a => a.Movies)
+                    .ThenInclude(m => m.Genre)
+                .Include(a => a.Movies)
+                    .ThenInclude(m => m.Actors)
+                .Where(expression)
+                .ToList();
         }
     }
 }

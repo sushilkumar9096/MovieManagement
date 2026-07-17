@@ -20,9 +20,21 @@ namespace MovieManagement.WebAPI.Controllers
 
         // GET: api/Actor
         [HttpGet]
-        public ActionResult<IEnumerable<ActorDto>> GetActors()
+        public ActionResult<IEnumerable<ActorDto>> GetActors([FromQuery] string? name)
         {
-            var actors = _unitOfWork.Actors.GetAll();
+            IEnumerable<Actor> actors;
+            if (!string.IsNullOrWhiteSpace(name))
+            {
+                var search = name.Trim().ToLower();
+                actors = _unitOfWork.Actors.Find(a => 
+                    a.FirstName.ToLower().Contains(search) || 
+                    a.LastName.ToLower().Contains(search));
+            }
+            else
+            {
+                actors = _unitOfWork.Actors.GetAll();
+            }
+
             var dtos = actors.Select(MapToDto).ToList();
             return Ok(dtos);
         }
@@ -131,9 +143,10 @@ namespace MovieManagement.WebAPI.Controllers
                     Id = m.Id,
                     Name = m.Name,
                     Description = m.Description,
-                    ActorId = m.ActorId,
-                    ActorName = $"{actor.FirstName} {actor.LastName}",
-                    Genres = m.Genre.Select(g => g.Name).ToList()
+                    Actors = m.Actors != null 
+                        ? m.Actors.Select(a => new ActorShortDto { Id = a.Id, Name = $"{a.FirstName} {a.LastName}" }).ToList() 
+                        : new List<ActorShortDto>(),
+                    Genres = m.Genre != null ? m.Genre.Select(g => g.Name).ToList() : new List<string>()
                 }).ToList()
             };
         }
